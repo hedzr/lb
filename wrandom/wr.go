@@ -20,6 +20,7 @@ import (
 //     )
 func New(opts ...lbapi.Opt) lbapi.Balancer { return wrr.New(opts...) }
 
+// WithWeightedBalancedPeers adds the WBPeer list as peers
 func WithWeightedBalancedPeers(peers ...WBPeer) lbapi.Opt {
 	return func(balancer lbapi.Balancer) {
 		for _, b := range peers {
@@ -30,6 +31,7 @@ func WithWeightedBalancedPeers(peers ...WBPeer) lbapi.Opt {
 	}
 }
 
+// NewPeer bundles a balancer generator and weight as a peer object
 func NewPeer(weight int, gen func(opts ...lbapi.Opt) lbapi.Balancer, opts ...lbapi.Opt) WBPeer {
 	return &wpPeer{
 		weight: weight,
