@@ -56,7 +56,7 @@ func (s *wrrS) init(opts ...lbapi.Opt) *wrrS {
 func (s *wrrS) Next(factor lbapi.Factor) (best lbapi.Peer, c lbapi.Constrainable) {
 	if best = s.miniNext(); best != nil {
 		if fc, ok := factor.(lbapi.FactorComparable); ok {
-			best, c, ok = fc.ConstrainedBy(best)
+			best, c, _ = fc.ConstrainedBy(best)
 		} else if nested, ok := best.(lbapi.BalancerLite); ok {
 			best, c = nested.Next(factor)
 		}

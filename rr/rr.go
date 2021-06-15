@@ -27,7 +27,7 @@ func (s *rrS) init(opts ...lbapi.Opt) *rrS {
 func (s *rrS) Next(factor lbapi.Factor) (next lbapi.Peer, c lbapi.Constrainable) {
 	next = s.miniNext()
 	if fc, ok := factor.(lbapi.FactorComparable); ok {
-		next, c, ok = fc.ConstrainedBy(next)
+		next, c, _ = fc.ConstrainedBy(next)
 	} else if nested, ok := next.(lbapi.BalancerLite); ok {
 		next, c = nested.Next(factor)
 	}
