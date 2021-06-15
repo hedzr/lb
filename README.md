@@ -1,7 +1,7 @@
 # go-lb
 
 ![Go](https://github.com/hedzr/lb/workflows/Go/badge.svg)
-[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/hedzr/rate.svg?label=release)](https://github.com/hedzr/lb/releases)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/hedzr/lb.svg?label=release)](https://github.com/hedzr/lb/releases)
 [![](https://img.shields.io/badge/go-dev-green)](https://pkg.go.dev/github.com/hedzr/lb)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/hedzr/lb) <!-- [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhedzr%2Flb.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fhedzr%2Flb?ref=badge_shield) 
 --> [![Go Report Card](https://goreportcard.com/badge/github.com/hedzr/lb)](https://goreportcard.com/report/github.com/hedzr/lb)
