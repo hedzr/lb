@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/hedzr/lb/lbapi"
-	rr2 "github.com/hedzr/lb/rr"
+	"github.com/hedzr/lb/rr"
 	"github.com/hedzr/log"
 	"net/http"
 	"net/http/httputil"
@@ -50,7 +50,7 @@ func main() {
 		ports = []int{8111, 8112}
 	}
 
-	var rr = rr2.New()
+	var b = rr.New()
 	for _, p := range ports {
 		urlTarget := fmt.Sprintf("%s://ds1.service.local:%v", "http", p)
 		target, err := url.Parse(urlTarget)
@@ -60,12 +60,12 @@ func main() {
 		log.Printf("forwarding to -> %s\n", target)
 		proxy := httputil.NewSingleHostReverseProxy(target)
 		proxy.Transport = DebugTransport{}
-		rr.Add(&ProxyPeer{proxy, urlTarget, 1})
+		b.Add(&ProxyPeer{proxy, urlTarget, 1})
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		req.Host = req.URL.Host
-		peer, _ := rr.Next(lbapi.DummyFactor)
+		peer, _ := b.Next(lbapi.DummyFactor)
 		peer.(*ProxyPeer).ServeHTTP(w, req)
 	})
 

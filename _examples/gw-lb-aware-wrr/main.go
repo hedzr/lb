@@ -52,7 +52,7 @@ func main() {
 	}
 
 	var rand = randomizer.New()
-	var rr = lb.New(lb.WeightedRoundRobin)
+	var b = lb.New(lb.WeightedRoundRobin)
 	for _, p := range ports {
 		urlTarget := fmt.Sprintf("%s://ds1.service.local:%v", "http", p)
 		target, err := url.Parse(urlTarget)
@@ -62,12 +62,12 @@ func main() {
 		log.Printf("forwarding to -> %s\n", target)
 		proxy := httputil.NewSingleHostReverseProxy(target)
 		proxy.Transport = DebugTransport{}
-		rr.Add(&ProxyPeer{proxy, urlTarget, rand.NextInRange(1, 10)})
+		b.Add(&ProxyPeer{proxy, urlTarget, rand.NextInRange(1, 10)})
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
 		req.Host = req.URL.Host
-		peer, _ := rr.Next(lbapi.DummyFactor)
+		peer, _ := b.Next(lbapi.DummyFactor)
 		peer.(*ProxyPeer).ServeHTTP(w, req)
 	})
 
