@@ -57,9 +57,7 @@ func (s *constrainablePeer) String() string                   { return s.constra
 func (s *constrainablePeer) Weight() int                      { return s.weight }
 func (s *constrainablePeer) Constraints() *semver.Constraints { return s.constraintsObj }
 func (s *constrainablePeer) CanConstrain(o interface{}) (yes bool) {
-	if _, ok := o.(*semver.Version); ok {
-		yes = true
-	}
+	_, yes = o.(*semver.Version)
 	return
 }
 func (s *constrainablePeer) Check(factor interface{}) (satisfied bool) {
