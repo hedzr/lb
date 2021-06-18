@@ -69,6 +69,12 @@ type FactorComparable interface {
 	ConstrainedBy(constraints interface{}) (peer Peer, c Constrainable, satisfied bool)
 }
 
+// FactorHashable is a composite interface which assembly Factor and hashing computer.
+type FactorHashable interface {
+	Factor
+	HashCode() uint32
+}
+
 // FactorString is a string type, it implements Factor interface.
 type FactorString string
 

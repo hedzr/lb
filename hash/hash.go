@@ -60,7 +60,7 @@ func (s *hashS) init(opts ...lbapi.Opt) *hashS {
 
 func (s *hashS) Next(factor lbapi.Factor) (next lbapi.Peer, c lbapi.Constrainable) {
 	var hash uint32
-	if h, ok := factor.(interface{ HashCode() uint32 }); ok {
+	if h, ok := factor.(lbapi.FactorHashable); ok {
 		hash = h.HashCode()
 	} else {
 		hash = s.hasher([]byte(factor.Factor()))
