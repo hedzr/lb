@@ -2,7 +2,7 @@ package version
 
 import (
 	"fmt"
-	"github.com/Masterminds/semver"
+	"github.com/Masterminds/semver/v3"
 	"github.com/hedzr/lb/lbapi"
 	"github.com/hedzr/log"
 )
@@ -19,7 +19,7 @@ type VersioningBackendFactor interface {
 // address is like 'host:port' typically, but you can use any forms you like.
 func NewBackendFactor(version string, addr string) VersioningBackendFactor {
 	f := &backendFactor{
-		version: check(version),
+		version: verCleanup(version),
 		addr:    addr,
 	}
 
@@ -38,7 +38,7 @@ type backendFactor struct {
 	versionObj *semver.Version
 }
 
-func check(v string) string {
+func verCleanup(v string) string {
 	if v[0] == 'v' {
 		return v[1:]
 	}

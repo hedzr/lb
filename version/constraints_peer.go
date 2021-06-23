@@ -2,7 +2,7 @@ package version
 
 import (
 	"fmt"
-	"github.com/Masterminds/semver"
+	"github.com/Masterminds/semver/v3"
 	"github.com/hedzr/lb/lbapi"
 )
 
@@ -34,15 +34,18 @@ import (
 //
 // See also NewBackendsFactor and New
 func NewConstrainablePeer(constraints string, weight int) (peer lbapi.Constrainable) {
-	p := &constrainablePeer{
-		constraints:    constraints,
-		weight:         weight,
-		constraintsObj: nil,
-	}
 	vc, err := semver.NewConstraint(constraints)
 	if err == nil {
-		p.constraintsObj = vc
-		peer = p
+		peer = NewConstrainablePeerFromObj(vc, weight)
+	}
+	return
+}
+
+func NewConstrainablePeerFromObj(constraints *semver.Constraints, weight int) (peer lbapi.Constrainable) {
+	peer = &constrainablePeer{
+		weight:         weight,
+		constraints:    constraints.String(),
+		constraintsObj: constraints,
 	}
 	return
 }

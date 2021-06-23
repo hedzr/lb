@@ -1,7 +1,7 @@
 package version
 
 import (
-	"github.com/Masterminds/semver"
+	"github.com/Masterminds/semver/v3"
 	"github.com/hedzr/lb/lbapi"
 	"github.com/hedzr/lb/wrr"
 	"github.com/hedzr/log"
