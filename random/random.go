@@ -51,9 +51,10 @@ func (s *randomS) miniNext() (next lbapi.Peer) {
 	s.rw.RLock()
 	defer s.rw.RUnlock()
 
-	l := int64(len(s.peers))
-	ni := atomic.AddInt64(&s.count, inRange(0, l)) % l
-	next = s.peers[ni]
+	if l := len(s.peers); l > 0 {
+		ni := atomic.AddInt64(&s.count, inRange(0, int64(l))) % int64(l)
+		next = s.peers[ni]
+	}
 	return
 }
 

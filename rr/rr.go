@@ -41,8 +41,10 @@ func (s *rrS) miniNext() (next lbapi.Peer) {
 
 	s.rw.RLock()
 	defer s.rw.RUnlock()
-	ni %= int64(len(s.peers))
-	next = s.peers[ni]
+	if len(s.peers) > 0 {
+		ni %= int64(len(s.peers))
+		next = s.peers[ni]
+	}
 	return
 }
 
