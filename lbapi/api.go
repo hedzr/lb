@@ -1,3 +1,5 @@
+// Copyright © 2021 Hedzr Yeh.
+
 package lbapi
 
 import "reflect"

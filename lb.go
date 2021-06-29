@@ -1,3 +1,5 @@
+// Copyright © 2021 Hedzr Yeh.
+
 // Package lb provides a flexible load balancer with pluggable strategies.
 package lb
 
