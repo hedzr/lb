@@ -1,6 +1,6 @@
 github.com/Masterminds/semver/v3 v3.1.1 h1:hLg3sBzpNErnxhQtUy/mmLR2I9foDujNK030IGemrRc=
 github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0cBrbBpGY/8hQs=
-github.com/hedzr/log v0.3.21 h1:mbTjaMo2QSUa1XnPy1tOMB+A7ftM1HY2T2KpefJ0U94=
-github.com/hedzr/log v0.3.21/go.mod h1:bmQqsGC0rv4r/5ISLJO++HM2kYoKfyBcRbncMknYNjY=
+github.com/hedzr/log v1.3.22 h1:+tbnCmmeCUkfQ0IY+MKOpCuHaqP/9BPYdn1sw/Fisb0=
+github.com/hedzr/log v1.3.22/go.mod h1:bmQqsGC0rv4r/5ISLJO++HM2kYoKfyBcRbncMknYNjY=
 gopkg.in/hedzr/errors.v2 v2.1.5 h1:fSHbWEoKcyfc8olz/0bfGshNlTnqEKZJ5Bo+bC6jdAQ=
 gopkg.in/hedzr/errors.v2 v2.1.5/go.mod h1:DEescy6i8SVj60/wLdTtFfx9r+LIctBbOLf7hYJ30AA=
