@@ -32,7 +32,7 @@ import (
 //
 // The advanced constraints expression syntax is described at:
 //
-//     https://github.com/Masterminds/semver
+//     https://github.com/Masterminds/semver/
 //
 func NewBuilder() Builder {
 	return &builder{}
