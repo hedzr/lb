@@ -16,6 +16,5 @@ go 1.17
 
 require (
 	github.com/Masterminds/semver/v3 v3.1.1
-	github.com/hedzr/log v1.5.0
-	gopkg.in/hedzr/errors.v2 v2.1.5
+	github.com/hedzr/log v1.5.57
 )
