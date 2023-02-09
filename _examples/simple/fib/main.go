@@ -5,7 +5,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"gopkg.in/hedzr/errors.v2"
+	"gopkg.in/hedzr/errors.v3"
 	"strconv"
 
 	"net/http"
