@@ -11,6 +11,7 @@ import (
 	"strconv"
 
 	"github.com/hedzr/lb/lbapi"
+	"github.com/hedzr/lb/pkg/logger"
 	"github.com/hedzr/lb/rr"
 )
 
