@@ -96,7 +96,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.18.x
+          go-version: 1.17.x
       - name: Checkout code
         uses: actions/checkout@v2
         #with:
@@ -214,7 +214,9 @@ jobs:
                 chmod +x ./bin/$APP_NAME$suf
                 if [[ $GOOS == "windows" ]]; then
                   7z a ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 ./bin/$APP_NAME$suf
+                  if [ -d ci/etc ]; then
                   cd ci && 7z a ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 etc/* && cd ..
+                  fi
                 else
                   if [ -d ci/etc ]; then
                   tar -czf ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 ./bin/$APP_NAME$suf -Cci etc
