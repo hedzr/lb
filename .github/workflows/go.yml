@@ -171,7 +171,7 @@ jobs:
           fi
 
       - name: Build
-        # if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
           APP_NAME="${GITHUB_REPOSITORY##*/}"
           APP_NAME=$(echo $APP_NAME | sed 's/^(go-)//' | sed 's/(-go)$//' | tr '[:upper:]' '[:lower:]')

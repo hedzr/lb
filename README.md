@@ -22,6 +22,28 @@ The stocked algorithm are:
 
 Use `Register(...)/Unregister(...)` to add the balancer with your algorithm and use it with our `New(algorithm, opts...)`.
 
+## History
+
+- v0.5.0
+  - a tiny logger interface has been embedded. So
+    - we removed the dep to `hedzr/log` and free you from it
+    - you may still enable internal logging sentences in `hedzr/lb` by setting up a custom [Logger](https://github.com/hedzr/lb/blob/master/pkg/logger/public.go#L4)
+
+      ```go
+      import "github.com/hedzr/lb/pkg/logger"
+      logger.SetLogger(yoursLogger)
+      ```
+
+  - all codes reviewed
+
+- v0.3.3
+  - needs go modules 1.17 and higher
+  - upgraded deps
+  - remove unecessary deps
+  - remove the nest go.mod since it cannot work any more
+  - fix gin vuln report
+
+- v0.3.1, v0.3.0 : work for below go1.17
 
 ## Usages
 
