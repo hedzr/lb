@@ -3,10 +3,11 @@
 package random_test
 
 import (
-	"github.com/hedzr/lb/lbapi"
-	"github.com/hedzr/lb/random"
 	"sync"
 	"testing"
+
+	"github.com/hedzr/lb/lbapi"
+	"github.com/hedzr/lb/random"
 )
 
 type exP string

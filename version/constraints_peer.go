@@ -4,6 +4,7 @@ package version
 
 import (
 	"fmt"
+
 	"github.com/Masterminds/semver/v3"
 	"github.com/hedzr/lb/lbapi"
 )
@@ -13,26 +14,26 @@ import (
 //
 // a version constraints expression has these forms:
 //
-//     ">= 1.2, < 3.0.0 || >= 4.2.3"
-//     "<2.x"
-//     "<3.1.x"
-//     "~1.2.3"   // is equivalent to >= 1.2.3, < 1.3.0
-//     "^1.2.3"   // is equivalent to >= 1.2.3, < 2.0.0
-//     "1.2 - 1.4.5"
-//     ...
+//	">= 1.2, < 3.0.0 || >= 4.2.3"
+//	"<2.x"
+//	"<3.1.x"
+//	"~1.2.3"   // is equivalent to >= 1.2.3, < 1.3.0
+//	"^1.2.3"   // is equivalent to >= 1.2.3, < 2.0.0
+//	"1.2 - 1.4.5"
+//	...
 //
 // The basic comparisons are:
 //
-//     =: equal (aliased to no operator)
-//     !=: not equal
-//     >: greater than
-//     <: less than
-//     >=: greater than or equal to
-//     <=: less than or equal to
+//	=: equal (aliased to no operator)
+//	!=: not equal
+//	>: greater than
+//	<: less than
+//	>=: greater than or equal to
+//	<=: less than or equal to
 //
 // The advanced constraints expression syntax is described at:
 //
-//     https://github.com/Masterminds/semver
+//	https://github.com/Masterminds/semver
 //
 // See also NewBackendsFactor and New
 func NewConstrainablePeer(constraints string, weight int) (peer lbapi.Constrainable) {

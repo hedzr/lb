@@ -4,15 +4,16 @@ package main
 
 import (
 	"fmt"
-	"github.com/hedzr/cmdr/tool/randomizer"
-	"github.com/hedzr/lb"
-	"github.com/hedzr/lb/lbapi"
-	"github.com/hedzr/log"
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
 	"strconv"
+
+	"github.com/hedzr/lb"
+	"github.com/hedzr/lb/internal/randomizer"
+	"github.com/hedzr/lb/lbapi"
 )
 
 var port = 8103

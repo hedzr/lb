@@ -3,8 +3,9 @@
 package version
 
 import (
-	"github.com/Masterminds/semver/v3"
 	"testing"
+
+	"github.com/Masterminds/semver/v3"
 )
 
 func TestNewConstraintsPeer(t *testing.T) {

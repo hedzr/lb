@@ -4,11 +4,12 @@ package version_test
 
 import (
 	"fmt"
-	"github.com/hedzr/lb/lbapi"
-	"github.com/hedzr/lb/version"
 	"strings"
 	"sync"
 	"testing"
+
+	"github.com/hedzr/lb/lbapi"
+	"github.com/hedzr/lb/version"
 )
 
 var testConstraints = []lbapi.Constrainable{

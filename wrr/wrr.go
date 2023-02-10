@@ -3,8 +3,9 @@
 package wrr
 
 import (
-	"github.com/hedzr/lb/lbapi"
 	"sync"
+
+	"github.com/hedzr/lb/lbapi"
 )
 
 // New make a new load-balancer instance with Weighted Round-Robin

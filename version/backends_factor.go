@@ -3,8 +3,9 @@
 package version
 
 import (
-	"github.com/hedzr/lb/lbapi"
 	"sync"
+
+	"github.com/hedzr/lb/lbapi"
 )
 
 // BackendsFactor interface
@@ -22,24 +23,23 @@ type BackendsFactor interface {
 //
 // Example:
 //
-//    bf := version.NewBackendsFactor(rr.New)
-//    bf.AddPeers(
-//        version.NewBackendFactor("1.1", "172.16.0.6:3500"),
-//        version.NewBackendFactor("1.3", "172.16.0.7:3500"),
-//        version.NewBackendFactor("2.0", "172.16.0.8:3500"),
-//        version.NewBackendFactor("3.13", "172.16.0.9:3500"),
-//    )
-//    //
-//    var testConstraints = []lbapi.Constrainable{
-//        version.NewConstrainablePeer("<= 1.1.x", 2),
-//        version.NewConstrainablePeer("^1.2.x", 4),
-//        version.NewConstrainablePeer("^2.x", 11),
-//        version.NewConstrainablePeer("^3.x", 3),
-//    }
-//    lb := version.New(version.WithConstrainedPeers(testConstraints...))
-//    factor := bf
-//    peer, c := lb.Next(factor)
-//
+//	bf := version.NewBackendsFactor(rr.New)
+//	bf.AddPeers(
+//	    version.NewBackendFactor("1.1", "172.16.0.6:3500"),
+//	    version.NewBackendFactor("1.3", "172.16.0.7:3500"),
+//	    version.NewBackendFactor("2.0", "172.16.0.8:3500"),
+//	    version.NewBackendFactor("3.13", "172.16.0.9:3500"),
+//	)
+//	//
+//	var testConstraints = []lbapi.Constrainable{
+//	    version.NewConstrainablePeer("<= 1.1.x", 2),
+//	    version.NewConstrainablePeer("^1.2.x", 4),
+//	    version.NewConstrainablePeer("^2.x", 11),
+//	    version.NewConstrainablePeer("^3.x", 3),
+//	}
+//	lb := version.New(version.WithConstrainedPeers(testConstraints...))
+//	factor := bf
+//	peer, c := lb.Next(factor)
 func NewBackendsFactor(gen func(opts ...lbapi.Opt) lbapi.Balancer, opts ...lbapi.Opt) BackendsFactor {
 	return &backendsFactor{
 		generator:   gen,

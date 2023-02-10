@@ -4,10 +4,11 @@ package hash
 
 import (
 	"fmt"
-	"github.com/hedzr/lb/lbapi"
 	"hash/crc32"
 	"sort"
 	"sync"
+
+	"github.com/hedzr/lb/lbapi"
 )
 
 // New make a new load-balancer instance with Ketama Hashing algorithm

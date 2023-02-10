@@ -4,9 +4,10 @@ package version
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/Masterminds/semver/v3"
 	"github.com/hedzr/lb/lbapi"
-	"github.com/hedzr/log"
 )
 
 // VersioningBackendFactor interface

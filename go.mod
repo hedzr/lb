@@ -14,7 +14,4 @@ go 1.17
 
 // replace github.com/hedzr/go-ringbuf => ../go-ringbuf
 
-require (
-	github.com/Masterminds/semver/v3 v3.1.1
-	github.com/hedzr/log v1.5.57
-)
+require github.com/Masterminds/semver/v3 v3.1.1

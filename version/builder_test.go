@@ -4,12 +4,13 @@ package version_test
 
 import (
 	"fmt"
+	"strings"
+	"testing"
+
 	"github.com/hedzr/lb/lbapi"
 	"github.com/hedzr/lb/rr"
 	"github.com/hedzr/lb/version"
 	"github.com/hedzr/lb/wrr"
-	"strings"
-	"testing"
 )
 
 func initFactors() version.BackendsFactor {

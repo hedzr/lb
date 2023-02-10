@@ -4,6 +4,9 @@
 package lb
 
 import (
+	"log"
+	"sync"
+
 	"github.com/hedzr/lb/hash"
 	"github.com/hedzr/lb/lbapi"
 	"github.com/hedzr/lb/random"
@@ -11,14 +14,12 @@ import (
 	"github.com/hedzr/lb/version"
 	"github.com/hedzr/lb/wrandom"
 	"github.com/hedzr/lb/wrr"
-	"github.com/hedzr/log"
-	"sync"
 )
 
 // New make a new instance of a balancer.
 //
-//    l := lb.New(lb.WeightedRoundRobin, lb.WithPeers(some-peers-here...))
-//    fmt.Println(l.Next(lbapi.DummyFactor)
+//	l := lb.New(lb.WeightedRoundRobin, lb.WithPeers(some-peers-here...))
+//	fmt.Println(l.Next(lbapi.DummyFactor)
 //
 // check out the real example in test codes.
 func New(algorithm string, opts ...lbapi.Opt) lbapi.Balancer {

@@ -3,37 +3,37 @@
 package version
 
 import (
+	"log"
+
 	"github.com/Masterminds/semver/v3"
 	"github.com/hedzr/lb/lbapi"
 	"github.com/hedzr/lb/wrr"
-	"github.com/hedzr/log"
 )
 
 // NewBuilder wraps an object into VerPeer struct.
 //
 // a verConstraints is an semver expression, such as:
 //
-//     ">= 1.2, < 3.0.0 || >= 4.2.3"
-//     "<2.x"
-//     "<3.1.x"
-//     "~1.2.3"   // is equivalent to >= 1.2.3, < 1.3.0
-//     "^1.2.3"   // is equivalent to >= 1.2.3, < 2.0.0
-//     "1.2 - 1.4.5"
-//     ...
+//	">= 1.2, < 3.0.0 || >= 4.2.3"
+//	"<2.x"
+//	"<3.1.x"
+//	"~1.2.3"   // is equivalent to >= 1.2.3, < 1.3.0
+//	"^1.2.3"   // is equivalent to >= 1.2.3, < 2.0.0
+//	"1.2 - 1.4.5"
+//	...
 //
 // The basic comparisons are:
 //
-//     =: equal (aliased to no operator)
-//     !=: not equal
-//     >: greater than
-//     <: less than
-//     >=: greater than or equal to
-//     <=: less than or equal to
+//	=: equal (aliased to no operator)
+//	!=: not equal
+//	>: greater than
+//	<: less than
+//	>=: greater than or equal to
+//	<=: less than or equal to
 //
 // The advanced constraints expression syntax is described at:
 //
-//     https://github.com/Masterminds/semver/
-//
+//	https://github.com/Masterminds/semver/
 func NewBuilder() Builder {
 	return &builder{}
 }

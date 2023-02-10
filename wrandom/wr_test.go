@@ -3,10 +3,11 @@
 package wrandom_test
 
 import (
+	"testing"
+
 	"github.com/hedzr/lb/lbapi"
 	"github.com/hedzr/lb/random"
 	"github.com/hedzr/lb/wrandom"
-	"testing"
 )
 
 type exP string

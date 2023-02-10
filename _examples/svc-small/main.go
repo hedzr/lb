@@ -6,19 +6,20 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/hedzr/log"
 	"net/http"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/hedzr/lb/pkg/logger"
 )
 
 var portArg = flag.Int("port", 8111, "server port")
 
 func main() {
-	log.SetLevel(log.DebugLevel)
+	logger.SetLevel(logger.DebugLevel)
 	flag.Parse()
 
 	mux := http.NewServeMux()
@@ -36,14 +37,14 @@ func main() {
 		fmt.Printf("Server started at port %v...\n", *portArg)
 		wgStartup.Done()
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Errorf("listen: %+v\n", err)
+			logger.Errorf("listen: %+v\n", err)
 		}
 	}()
 	go func() {
 		wgStartup.Done()
 		<-exitCh
 		if err = srv.Shutdown(context.Background()); err != nil {
-			log.Errorf("server Shutdown Failed: %+v", err)
+			logger.Errorf("server Shutdown Failed: %+v", err)
 		}
 		if err == http.ErrServerClosed {
 			err = nil

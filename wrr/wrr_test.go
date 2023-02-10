@@ -3,10 +3,11 @@
 package wrr_test
 
 import (
-	"github.com/hedzr/lb/lbapi"
-	"github.com/hedzr/lb/wrr"
 	"sync"
 	"testing"
+
+	"github.com/hedzr/lb/lbapi"
+	"github.com/hedzr/lb/wrr"
 )
 
 type exP struct {

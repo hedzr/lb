@@ -3,12 +3,13 @@
 package hash_test
 
 import (
-	"github.com/hedzr/lb/hash"
-	"github.com/hedzr/lb/lbapi"
 	"hash/crc32"
 	"strings"
 	"sync"
 	"testing"
+
+	"github.com/hedzr/lb/hash"
+	"github.com/hedzr/lb/lbapi"
 )
 
 type exP string

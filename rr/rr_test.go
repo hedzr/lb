@@ -3,10 +3,11 @@
 package rr_test
 
 import (
-	"github.com/hedzr/lb/lbapi"
-	"github.com/hedzr/lb/rr"
 	"sync"
 	"testing"
+
+	"github.com/hedzr/lb/lbapi"
+	"github.com/hedzr/lb/rr"
 )
 
 type exP string

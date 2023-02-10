@@ -4,14 +4,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/hedzr/lb/lbapi"
-	"github.com/hedzr/lb/rr"
-	"github.com/hedzr/log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
 	"strconv"
+
+	"github.com/hedzr/lb/lbapi"
+	"github.com/hedzr/lb/rr"
+	"github.com/hedzr/log"
 )
 
 var port = 8103

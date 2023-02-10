@@ -3,11 +3,12 @@
 package random
 
 import (
-	"github.com/hedzr/lb/lbapi"
 	mrand "math/rand"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/hedzr/lb/lbapi"
 )
 
 var seededRand = mrand.New(mrand.NewSource(time.Now().UnixNano()))

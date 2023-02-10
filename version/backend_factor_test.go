@@ -3,8 +3,9 @@
 package version
 
 import (
-	"github.com/hedzr/lb/rr"
 	"testing"
+
+	"github.com/hedzr/lb/rr"
 )
 
 func TestBackendFactor(t *testing.T) {

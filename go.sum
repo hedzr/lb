@@ -1,5 +1,2 @@
 github.com/Masterminds/semver/v3 v3.1.1 h1:hLg3sBzpNErnxhQtUy/mmLR2I9foDujNK030IGemrRc=
 github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0cBrbBpGY/8hQs=
-github.com/hedzr/log v1.5.57 h1:cRndW1n9XssMqeawK1egvGX12lBg1AVXpjMp615ABy0=
-github.com/hedzr/log v1.5.57/go.mod h1:IWN50/XihS9BqNu8edBHV9zFOuYmGUtyewwEzeUpBxg=
-gopkg.in/hedzr/errors.v3 v3.0.23/go.mod h1:UwtyepqtGTIAmdZGSc7wxXT5Gfd/BjcfRMhPpxwkJM4=

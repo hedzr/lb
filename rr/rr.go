@@ -3,9 +3,10 @@
 package rr
 
 import (
-	"github.com/hedzr/lb/lbapi"
 	"sync"
 	"sync/atomic"
+
+	"github.com/hedzr/lb/lbapi"
 )
 
 // New make a new load-balancer instance with Round-Robin
