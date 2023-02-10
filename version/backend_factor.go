@@ -4,10 +4,10 @@ package version
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/hedzr/lb/lbapi"
+	"github.com/hedzr/lb/pkg/logger"
 )
 
 // VersioningBackendFactor interface
@@ -29,7 +29,7 @@ func NewBackendFactor(version string, addr string) VersioningBackendFactor {
 	var err error
 	f.versionObj, err = semver.NewVersion(f.version)
 	if err != nil {
-		log.Errorf("illegal version %q: %v", f.version, err)
+		logger.Errorf("illegal version %q: %v", f.version, err)
 	}
 
 	return f

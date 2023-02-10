@@ -3,10 +3,9 @@
 package version
 
 import (
-	"log"
-
 	"github.com/Masterminds/semver/v3"
 	"github.com/hedzr/lb/lbapi"
+	"github.com/hedzr/lb/pkg/logger"
 	"github.com/hedzr/lb/wrr"
 )
 
@@ -59,7 +58,7 @@ func (b *builder) AddPeer(verConstraints string, weight int) Builder {
 	var err error
 	vp.constraintsObj, err = semver.NewConstraint(vp.constraints)
 	if err != nil {
-		log.Errorf("version constraints %q parsing failed: %v", vp.constraints, err)
+		logger.Errorf("version constraints %q parsing failed: %v", vp.constraints, err)
 	}
 
 	b.peers = append(b.peers, vp)
