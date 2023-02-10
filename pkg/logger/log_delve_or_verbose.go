@@ -79,6 +79,22 @@ func Errorf(format string, v ...interface{}) {
 	Log(format, v...)
 }
 
+func Fatalf(format string, v ...interface{}) {
+	if realLogger != nil {
+		realLogger.Fatalf(format, v...)
+		return
+	}
+	log.Fatalf(format, v...)
+}
+
+func Panicf(format string, v ...interface{}) {
+	if realLogger != nil {
+		realLogger.Panicf(format, v...)
+		return
+	}
+	log.Panicf(format, v...)
+}
+
 func Printf(format string, v ...interface{}) {
 	if realLogger != nil {
 		realLogger.Printf(format, v...)

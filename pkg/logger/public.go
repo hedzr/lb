@@ -9,6 +9,8 @@ type Logger interface {
 	Tracef(format string, v ...interface{})
 
 	Errorf(format string, v ...interface{})
+	Fatalf(format string, v ...interface{})
+	Panicf(format string, v ...interface{})
 
 	SetLevel(lvl Level)
 	GetLevel() Level
