@@ -216,7 +216,11 @@ jobs:
                   7z a ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 ./bin/$APP_NAME$suf
                   cd ci && 7z a ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 etc/* && cd ..
                 else
+                  if [ -d ci/etc ]; then
                   tar -czf ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 ./bin/$APP_NAME$suf -Cci etc
+                  else
+                  tar -czf ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 ./bin/$APP_NAME$suf
+                  fi
                 fi
                 sha256sum ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 >> $BINARIES_ASC
                 rm -f ./bin/$APP_NAME$suf
