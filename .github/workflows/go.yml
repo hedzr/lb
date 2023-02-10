@@ -2,33 +2,34 @@ name: Go
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
     # Sequence of patterns matched against refs/tags
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
   pull_request:
-    branches: [ master ]
+    branches: [master]
     # types: [assigned, opened, synchronize, reopened]
 
 #on: [push, pull_request]
 
 env:
+  OSes: windows linux darwin
+  ARCHes: amd64 arm64
   APPNAME: "lb"
   APPS: ""                    # optional, a space separated name list.
-  FROM_FOLDER: "./_examples"  # or "." for building "cli"
+  FROM_FOLDER: "./_examples"  # Use "." for building "cli"; use "./_examples" for building them
   ENABLE_DOCKER: 0
-  IMAGE_NAME:
+  IMAGE_NAME: ""
   #HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
   #GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-
   test:
     strategy:
       matrix:
         go-version: [ 1.17.x ]                 # 1.11.x, 1.12.x, 1.13.x,
         #os: [ubuntu-latest, macos-latest, windows-latest]
-        os: [ ubuntu-latest ]
+        os: [ubuntu-latest]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
@@ -46,9 +47,11 @@ jobs:
             ${{ runner.os }}-go-
       - name: Test
         run: |
-          go mod download
-          # go build -v -o main ./cli && rm main
-          go test ./...
+          GOSUMDB=off go mod download
+          # go install -v github.com/swaggo/swag/cmd/swag
+          # go generate ./...
+          # go build -v ./...
+          go test -v ./...
 
   coverage:
     needs: test
@@ -71,188 +74,389 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - name: Test & Coverage
-        run: go test -v -coverprofile=profile.cov ./...
+        run: |
+          # go install -v github.com/swaggo/swag/cmd/swag
+          # go generate ./...
+          go test -v -coverprofile=profile.cov ./...
       - name: Send coverage
         uses: shogo82148/actions-goveralls@v1
         with:
           path-to-profile: profile.cov
           parallel: true
 
-#  build:
-#    needs: coverage
-#    #env:
-#    #  GOPATH: ${{ github.workspace }}
-#    #  GO111MODULE: off
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Install Go
-#        uses: actions/setup-go@v2
-#        with:
-#          go-version: 1.14.x
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#        #with:
-#        #  path: ./src/github.com/${{ github.repository }}
-#      - uses: actions/cache@v2
-#        with:
-#          path: ~/go/pkg/mod
-#          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-#          restore-keys: |
-#            ${{ runner.os }}-go-
-#
-#      - name: Docker Build
-#        #if: startsWith(github.ref, 'refs/tags/v') || contains(github.ref, '/master')
-#        if: startsWith(github.ref, 'refs/tags/v')
-#        env:
-#          HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-#          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          IMAGE_TAG:
-#        run: |
-#          if [[ $ENABLE_DOCKER -eq 1 ]]; then
-#            if [[ -f Dockerfile ]]; then
-#              IMAGE_TAG=${GITHUB_REF#*/}
-#              IMAGE_TAG=${IMAGE_TAG#*/}
-#              IMAGE_TAG=$(echo $IMAGE_TAG | sed -e "s#^v##")
-#              echo "Using IMAGE_TAG: $IMAGE_TAG"
-#              docker build \
-#                -t docker.pkg.github.com/hedzr/$APPNAME/$APPNAME:$IMAGE_TAG \
-#                -t docker.pkg.github.com/hedzr/$APPNAME/$APPNAME:latest \
-#                -t hedzr/$APPNAME:$IMAGE_TAG \
-#                -t hedzr/$APPNAME:latest \
-#                .
-#              echo $GH_TOKEN | docker login docker.pkg.github.com -u hedzr --password-stdin
-#              # docker tag IMAGE_ID docker.pkg.github.com/hedzr/$APPNAME:$VERSION
-#              docker push docker.pkg.github.com/hedzr/$APPNAME/$APPNAME:$IMAGE_TAG
-#              docker push docker.pkg.github.com/hedzr/$APPNAME/$APPNAME:latest
-#              #
-#              echo $HUB_TOKEN | docker login -u hedzr --password-stdin
-#              # docker tag docker.pkg.github.com/hedzr/$APPNAME:latest hedzr/$APPNAME:$IMAGE_TAG
-#              # docker tag docker.pkg.github.com/hedzr/$APPNAME:latest hedzr/$APPNAME:latest
-#              docker push hedzr/$APPNAME:$IMAGE_TAG
-#              docker push hedzr/$APPNAME:latest
-#            fi
-#          fi
-#
-#      - name: Build
-#        run: |
-#          export GIT_REVISION="$(git rev-parse --short HEAD)"
-#          export GOVERSION="$(go version)"
-#          export BUILDTIME="$(date -u '+%Y-%m-%d_%H-%M-%S')"
-#          export VERSION="$(grep -E "Version[ \t]+=[ \t]+" doc.go|grep -Eo "[0-9.]+")"
-#          export W_PKG="github.com/hedzr/cmdr/conf"
-#          export LDFLAGS="-s -w \
-#            -X '$W_PKG.Githash=$GIT_REVISION' \
-#            -X '$W_PKG.GoVersion=$GOVERSION' \
-#            -X '$W_PKG.Buildstamp=$BUILDTIME' \
-#            -X '$W_PKG.Version=$VERSION'"
-#          cat <<EOF
-#                Version: $VERSION
-#           GIT_REVISION: $GIT_REVISION
-#              GOVERSION: $GOVERSION
-#              BUILDTIME: $BUILDTIME
-#          EOF
-#          for app in ${APPS:-$APPNAME}; do
-#            for dir in ${FROM_FOLDER:-.}; do
-#              SDIR=cli; [[ $FROM_FOLDER != "." ]] && SDIR=$app
-#              for GOOS in windows linux darwin; do
-#                for GOARCH in amd64; do
-#                  suf=; if [[ $GOOS == "windows" ]]; then suf=".exe"; fi
-#                  CGO_ENABLED=0 GOOS=$GOOS GOARCH=$GOARCH \
-#                    go build -v -a -installsuffix cgo -ldflags "$LDFLAGS" -o ./bin/$app$suf ./$dir/$SDIR
-#                  chmod +x ./bin/$app$suf
-#                  if [[ $GOOS == "windows" ]]; then
-#                    zip -u ./bin/$app-v$VERSION-$GOOS-$GOARCH$suf.zip ./bin/$app$suf
-#                    cd ci; zip -u -r ../bin/$app-v$VERSION-$GOOS-$GOARCH$suf.zip etc/*; cd ..
-#                    rm ./bin/$app$suf
-#                  else
-#                    tar -czf ./bin/$app-v$VERSION-$GOOS-$GOARCH$suf.tgz ./bin/$app$suf -C ci etc/$app && rm ./bin/$app$suf
-#                  fi
-#                done
-#              done
-#            done
-#          done
-#          shasum -a 256 -b ./bin/* > bin/sha256sum.txt
-#          ls -la bin/
-#
-#      - name: Upload artifacts
-#        uses: actions/upload-artifact@master
-#        if: startsWith(github.ref, 'refs/tags/v')
-#        with:
-#          name: binaries
-#          path: bin/
-#
-#      - name: Upload binaries to release
-#        uses: svenstaro/upload-release-action@v2
-#        if: startsWith(github.ref, 'refs/tags/v')
-#        with:
-#          repo_token: ${{ secrets.GITHUB_TOKEN }}
-#          file: bin/*
-#          tag: ${{ github.ref }}
-#          overwrite: true
-#          file_glob: true
-#          #body:
-
-      # - name: Update Homebrew Formula
-      #   uses: izumin5210/action-homebrew-tap@v1
-      #   if: startsWith(github.ref, 'refs/tags/v')
-      #   with:
-      #     tap: hedzr/homebrew-brew
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     tap-token: ${{ secrets.TAP_GITHUB_TOKEN }} # require `repo` or `public_repo` scope for the tap repository
-
-      # - name: Update Homebrew formula
-      #   uses: dawidd6/action-homebrew-bump-formula@v3
-      #   with:
-      #     # GitHub token, required, not the default one
-      #     token: ${{secrets.TAP_GITHUB_TOKEN}}
-      #     # Optional, defaults to homebrew/core
-      #     tap: hedzr/homebrew-brew
-      #     # Formula name, required
-      #     formula: awesome-tool
-      #     # Optional, will be determined automatically
-      #     tag: ${{github.ref}}
-      #     # Optional, will be determined automatically
-      #     revision: ${{github.sha}}
-      #     # Optional, if don't want to check for already open PRs
-      #     force: false # true
-
-
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     release_name: Release ${{ github.ref }}
-      #     draft: false
-      #     prerelease: false
-      #
-      # - name: Upload Release Asset
-      #   id: upload-release-asset
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-      #     asset_path: bin/*
-      #     asset_name: my-artifact.zip
-      #     asset_content_type: application/zip
-
-  # notifies coveralls that all test jobs are finished
-  finish:
-    name: Finish
+  release-build:
     needs: coverage
     runs-on: ubuntu-latest
+    env:
+      ACTOR_EMAIL: hedzr@duck.com
+      BUMPER_VER: v0.2.0
+      HOMEBREW_TAP: hedzr/homebrew-brew
+      BINARIES_ASC: ./bin/binaries.asc
     steps:
-      - uses: shogo82148/actions-goveralls@v1
+      - name: Install Go
+        uses: actions/setup-go@v2
         with:
-          parallel-finished: true
+          go-version: 1.18.x
+      - name: Checkout code
+        uses: actions/checkout@v2
+        #with:
+        #  path: ./src/github.com/${{ github.repository }}
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
 
+      - name: Set Env
+        run: |
+          RELEASE_VERSION=${GITHUB_REF#refs/*/}
+          echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_ENV
+          echo "VERSION=${RELEASE_VERSION/v/}" >> $GITHUB_ENV
 
+      - name: Docker Build
+        # if: startsWith(github.ref, 'refs/tags/v') || contains(github.ref, '/master')
+        if: startsWith(github.ref, 'refs/tags/v') && env.ENABLE_DOCKER != 0
+        env:
+          HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #IMAGE_NAME: your-starter # never used
+          #IMAGE_TAG:
+          #PORT:
+          #VERSION:
+        run: |
+          IMAGE_NAME="${GITHUB_REPOSITORY##*/}"
+          IMAGE_NAME=$(echo $IMAGE_NAME | sed 's/^(go-)//' | sed 's/(-go)$//' | tr '[:upper:]' '[:lower:]')
+          if [ $IMAGE_NAME = "cmdrstarter" ]; then IMAGE_NAME=your-starter; fi
+          ACTOR=$(echo $GITHUB_ACTOR | tr '[:upper:]' '[:lower:]')
+          #
+          IMAGE_TAG=${GITHUB_REF#*/}
+          IMAGE_TAG=${IMAGE_TAG#*/}
+          IMAGE_TAG=$(echo $IMAGE_TAG | sed -e "s#^v##")
+          echo "Using IMAGE_TAG: $IMAGE_TAG"
+          #
+          TIMESTAMP=$(date -Iseconds)
+          GIT_VERSION="$(git describe --tags --abbrev=0 2>/dev/null || echo "$VERSION")"
+          GIT_REVISION="$(git rev-parse --short HEAD)"
+          GIT_SUMMARY="$(git describe --tags --dirty --always)"
+          GIT_DESC="$(git log --oneline -1)"
+          BUILDER_COMMENT=""
+          #
+          # export VERSION="$(grep -E "Version[ \t]+=[ \t]+" doc.go|grep -Eo "[0-9.]+")"
+          docker build -f app.Dockerfile \
+            --build-arg APPNAME="$IMAGE_NAME" \
+            --build-arg VERSION="$VERSION" \
+            --build-arg PORT="$PORT" \
+            --build-arg TIMESTAMP="$(TIMESTAMP)" \
+            --build-arg GIT_REVISION="$(GIT_REVISION)" \
+            --build-arg GIT_SUMMARY="$(GIT_SUMMARY)" \
+            --build-arg GIT_DESC="$(GIT_DESC)" \
+            --build-arg BUILDER_COMMENT="$(BUILDER_COMMENT)" \
+            --build-arg GOPROXY="https://goproxy.io,direct" \
+            -t ghcr.io/$ACTOR/$IMAGE_NAME:$IMAGE_TAG \
+            -t ghcr.io/$ACTOR/$IMAGE_NAME:latest \
+            -t $ACTOR/$IMAGE_NAME:$IMAGE_TAG \
+            -t $ACTOR/$IMAGE_NAME:latest \
+            .
+          if [ "$GH_TOKEN" != "" ]; then
+            docker login ghcr.io -u $ACTOR -p $GH_TOKEN
+            # docker tag IMAGE_ID ghcr.io/$ACTOR/$IMAGE_NAME:$VERSION
+            docker push ghcr.io/$ACTOR/$IMAGE_NAME:$IMAGE_TAG
+            docker push ghcr.io/$ACTOR/$IMAGE_NAME:latest
+          fi
+          if [ "$HUB_TOKEN" != "" ]; then
+            docker login -u $ACTOR -p $HUB_TOKEN
+            docker push $ACTOR/$IMAGE_NAME:$IMAGE_TAG
+            docker push $ACTOR/$IMAGE_NAME:latest
+          fi
 
+      - name: Build
+        # if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          APP_NAME="${GITHUB_REPOSITORY##*/}"
+          APP_NAME=$(echo $APP_NAME | sed 's/^(go-)//' | sed 's/(-go)$//' | tr '[:upper:]' '[:lower:]')
+          if [ $APP_NAME = "cmdrstarter" ]; then APP_NAME=your-starter; fi
+          ACTOR=$(echo $GITHUB_ACTOR | tr '[:upper:]' '[:lower:]')
+          #
+          export GOSUMDB=off
+          export GIT_REVISION="$(git rev-parse --short HEAD)"
+          export GOVERSION="$(go version)"
+          # export BUILDTIME="$(date -u '+%Y-%m-%d_%H-%M-%S')"
+          export BUILDTIME="$(date -Iseconds)"
+          # export VERSION="$(grep -E "Version[ \t]+=[ \t]+" doc.go|grep -Eo "[0-9.]+")"
+          export W_PKG="github.com/hedzr/cmdr/conf"
+          export LDFLAGS="-s -w \
+            -X '$W_PKG.Githash=$GIT_REVISION' \
+            -X '$W_PKG.GoVersion=$GOVERSION' \
+            -X '$W_PKG.Buildstamp=$BUILDTIME' \
+            -X '$W_PKG.ServerID=pre-built' \
+            -X '$W_PKG.Version=$VERSION' "
+          cat <<EOF
+                Version: $VERSION
+           GIT_REVISION: $GIT_REVISION
+              GOVERSION: $GOVERSION
+              BUILDTIME: $BUILDTIME
+          EOF
+          # go install -v github.com/swaggo/swag/cmd/swag
+          # go generate ./...
+          # for app in app1 app2 app3 ...; do
+          #
+          # for app in $(ls -b ./cli) ; do
+          # for dir in cli; do
+          fromdir="$FROM_FOLDER"
+          [ -d $fromdir/cli ] && fromdir="$fromdir/cli"
+          for app in $(ls -b $fromdir); do
+          for dir in .; do
+            for GOOS in $OSes; do
+              for GOARCH in $ARCHes; do
+                suf=; suf2=tgz; if [[ $GOOS == "windows" ]]; then suf=".exe"; suf2=7z; if [ "$GOARCH" == "arm64" ]; then GOARCH=arm; fi; fi
+                GOOS=$GOOS GOARCH=$GOARCH CGO_ENABLED=0 go build -v -trimpath -ldflags "$LDFLAGS" -o ./bin/$APP_NAME$suf $fromdir/$dir/$app
+                chmod +x ./bin/$APP_NAME$suf
+                if [[ $GOOS == "windows" ]]; then
+                  7z a ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 ./bin/$APP_NAME$suf
+                  cd ci && 7z a ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 etc/* && cd ..
+                else
+                  tar -czf ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 ./bin/$APP_NAME$suf -Cci etc
+                fi
+                sha256sum ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 >> $BINARIES_ASC
+                rm -f ./bin/$APP_NAME$suf
+              done
+            done
+          done
+          done
+          ls -la bin/*
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@master
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          name: binaries
+          path: bin/
 
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: bin/*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
+          #body:
 
+  # release-build-1:
+  #   needs: coverage
+  #   env:
+  #     ACTOR_EMAIL: hedzr@duck.com
+  #     BUMPER_VER: v1.0.0
+  #     HOMEBREW_TAP: hedzr/homebrew-brew
+  #     BINARIES_ASC: ./bin/binaries.asc
+  #   #env:
+  #   #  GOPATH: ${{ github.workspace }}
+  #   #  GO111MODULE: off
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Install Go
+  #       uses: actions/setup-go@v2
+  #       with:
+  #         go-version: 1.18.x
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+  #       #with:
+  #       #  path: ./src/github.com/${{ github.repository }}
+  #     - uses: actions/cache@v2
+  #       with:
+  #         path: ~/go/pkg/mod
+  #         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-go-
 
+  #     - name: Set Env
+  #       run: |
+  #         RELEASE_VERSION=${GITHUB_REF#refs/*/}
+  #         echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_ENV
+  #         echo "VERSION=${RELEASE_VERSION/v/}" >> $GITHUB_ENV
+
+  #     - name: Docker Build
+  #       # if: startsWith(github.ref, 'refs/tags/v') || contains(github.ref, '/master')
+  #       if: startsWith(github.ref, 'refs/tags/v')
+  #       env:
+  #         HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         #IMAGE_NAME: your-starter # never used
+  #         #IMAGE_TAG:
+  #         #PORT:
+  #         #VERSION:
+  #       run: |
+  #         IMAGE_NAME="${GITHUB_REPOSITORY##*/}"
+  #         IMAGE_NAME=$(echo $IMAGE_NAME | sed 's/^(go-)//' | sed 's/(-go)$//' | tr '[:upper:]' '[:lower:]')
+  #         if [ $IMAGE_NAME = "cmdrstarter" ]; then IMAGE_NAME=your-starter; fi
+  #         ACTOR=$(echo $GITHUB_ACTOR | tr '[:upper:]' '[:lower:]')
+  #         #
+  #         IMAGE_TAG=${GITHUB_REF#*/}
+  #         IMAGE_TAG=${IMAGE_TAG#*/}
+  #         IMAGE_TAG=$(echo $IMAGE_TAG | sed -e "s#^v##")
+  #         echo "Using IMAGE_TAG: $IMAGE_TAG"
+  #         # export VERSION="$(grep -E "Version[ \t]+=[ \t]+" doc.go|grep -Eo "[0-9.]+")"
+  #         docker build -f app.Dockerfile \
+  #           --build-arg APPNAME=$IMAGE_NAME \
+  #           --build-arg VERSION=$VERSION \
+  #           --build-arg PORT=$PORT \
+  #           --build-arg GOPROXY=https://goproxy.io,direct \
+  #           -t ghcr.io/$ACTOR/$IMAGE_NAME:$IMAGE_TAG \
+  #           -t ghcr.io/$ACTOR/$IMAGE_NAME:latest \
+  #           -t $ACTOR/$IMAGE_NAME:$IMAGE_TAG \
+  #           -t $ACTOR/$IMAGE_NAME:latest \
+  #           .
+  #         if [ "$GH_TOKEN" != "" ]; then
+  #           docker login ghcr.io -u $ACTOR -p $GH_TOKEN
+  #           # docker tag IMAGE_ID ghcr.io/$ACTOR/$IMAGE_NAME:$VERSION
+  #           docker push ghcr.io/$ACTOR/$IMAGE_NAME:$IMAGE_TAG
+  #           docker push ghcr.io/$ACTOR/$IMAGE_NAME:latest
+  #         fi
+  #         if [ "$HUB_TOKEN" != "" ]; then
+  #           docker login -u $ACTOR -p $HUB_TOKEN
+  #           docker push $ACTOR/$IMAGE_NAME:$IMAGE_TAG
+  #           docker push $ACTOR/$IMAGE_NAME:latest
+  #         fi
+
+  #     - name: Build
+  #       if: startsWith(github.ref, 'refs/tags/v')
+  #       run: |
+  #         APP_NAME="${GITHUB_REPOSITORY##*/}"
+  #         APP_NAME=$(echo $APP_NAME | sed 's/^(go-)//' | sed 's/(-go)$//' | tr '[:upper:]' '[:lower:]')
+  #         if [ $APP_NAME = "cmdrstarter" ]; then APP_NAME=your-starter; fi
+  #         ACTOR=$(echo $GITHUB_ACTOR | tr '[:upper:]' '[:lower:]')
+  #         #
+  #         export GOSUMDB=off
+  #         export GIT_REVISION="$(git rev-parse --short HEAD)"
+  #         export GOVERSION="$(go version)"
+  #         export BUILDTIME="$(date -u '+%Y-%m-%d_%H-%M-%S')"
+  #         #export VERSION="$(grep -E "Version[ \t]+=[ \t]+" doc.go|grep -Eo "[0-9.]+")"
+  #         export W_PKG="github.com/hedzr/cmdr/conf"
+  #         export LDFLAGS="-s -w \
+  #           -X '$W_PKG.Githash=$GIT_REVISION' \
+  #           -X '$W_PKG.GoVersion=$GOVERSION' \
+  #           -X '$W_PKG.Buildstamp=$BUILDTIME' \
+  #           -X '$W_PKG.ServerID=pre-built' \
+  #           -X '$W_PKG.Version=$VERSION' "
+  #         cat <<EOF
+  #               Version: $VERSION
+  #          GIT_REVISION: $GIT_REVISION
+  #             GOVERSION: $GOVERSION
+  #             BUILDTIME: $BUILDTIME
+  #         EOF
+  #         # go install -v github.com/swaggo/swag/cmd/swag
+  #         # go generate ./...
+  #         # for app in app1 app2 app3 ...; do
+  #         for app in $(ls -b ./cli) ; do
+  #         for dir in cli; do
+  #           for GOOS in windows linux darwin; do
+  #             for GOARCH in amd64 arm64; do
+  #               suf=; suf2=tgz; if [[ $GOOS == "windows" ]]; then suf=".exe"; suf2=7z; if [ "$GOARCH" == "arm64" ]; then GOARCH=arm; fi; fi
+  #               GOOS=$GOOS GOARCH=$GOARCH CGO_ENABLED=0 go build -v -trimpath -ldflags "$LDFLAGS" -o ./bin/$APP_NAME$suf ./$dir/$app
+  #               chmod +x ./bin/$APP_NAME$suf
+  #               if [[ $GOOS == "windows" ]]; then
+  #                 7z a ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 ./bin/$APP_NAME$suf
+  #                 cd ci && 7z a ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 etc/* && cd ..
+  #               else
+  #                 tar -czf ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 ./bin/$APP_NAME$suf -Cci etc
+  #               fi
+  #               sha256sum ./bin/$APP_NAME-$GOOS-$GOARCH$suf.$suf2 >> $BINARIES_ASC
+  #               rm -f ./bin/$APP_NAME$suf
+  #             done
+  #           done
+  #         done
+  #         done
+
+  #     - name: bump homebrew-brew
+  #       if: startsWith(github.ref, 'refs/tags/v')
+  #       env:
+  #         HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+  #         GH_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
+  #       run: |
+  #         mkdir .pr && cd .pr
+  #         APP_NAME="${GITHUB_REPOSITORY##*/}"
+  #         APP_NAME=$(echo $APP_NAME | sed 's/^(go-)//' | sed 's/(-go)$//' | tr '[:upper:]' '[:lower:]')
+  #         ACTOR=$(echo $GITHUB_ACTOR | tr '[:upper:]' '[:lower:]')
+  #         if [ -f .pr/no-disabled ]; then
+  #           git clone https://hedzr:$GITHUB_TOKEN@github.com/hedzr/homebrew-brew.git
+  #           cd homebrew-brew
+  #           git config --unset-all http.https://github.com/.extraheader
+  #           git config user.name 'hedzr'
+  #           git config user.email 'hedzrz@gmail.com'
+  #           #
+  #           sed -i -r "s/v\d+\.\d+\.\d+/$RELEASE_VERSION/ig" Formular/$APP_NAME.rb
+  #           sed -i -r "s///ig" Formular/$APP_NAME.rb
+  #           #
+  #           git add .
+  #           git commit -m "bump to $APP_NAME $RELEASE_VERSION"
+  #           git push --set-upstream https://hedzr:$GITHUB_TOKEN@github.com/hedzr/homebrew-brew.git master
+  #         fi
+  #         # go get -v github.com/hedzr/go-bumper
+  #         wget https://github.com/hedzr/go-bumper/releases/download/${BUMPER_VER}/bumper-linux-amd64.tgz
+  #         tar -xf bumper-linux-amd64.tgz
+  #         cd ..
+  #         echo .pr/bin/bumper brew -act $ACTOR -am $ACTOR_EMAIL -f $APP_NAME \
+  #           -ref $GITHUB_REF -ver $RELEASE_VERSION -t $HOMEBREW_TAP \
+  #           --sha $BINARIES_ASC \
+  #           --push
+  #         .pr/bin/bumper brew -act $ACTOR -am $ACTOR_EMAIL -f $APP_NAME \
+  #           -ref $GITHUB_REF -ver $RELEASE_VERSION -t $HOMEBREW_TAP \
+  #           --sha $BINARIES_ASC \
+  #           --token ${GH_TOKEN} \
+  #           --push
+  #     - name: bump launchpad
+  #       if: startsWith(github.ref, 'refs/tags/v')
+  #       run: |
+  #         echo NOT YET
+
+  #     - name: Upload artifacts
+  #       uses: actions/upload-artifact@master
+  #       if: startsWith(github.ref, 'refs/tags/v')
+  #       with:
+  #         name: binaries
+  #         path: bin/
+
+  #     - name: Upload binaries to release
+  #       uses: svenstaro/upload-release-action@v2
+  #       if: startsWith(github.ref, 'refs/tags/v')
+  #       with:
+  #         repo_token: ${{ secrets.GITHUB_TOKEN }}
+  #         file: bin/*
+  #         tag: ${{ github.ref }}
+  #         overwrite: true
+  #         file_glob: true
+  #         #body:
+
+  #      - name: Create Release
+  #        id: create_release
+  #        uses: actions/create-release@v1
+  #        env:
+  #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #        with:
+  #          tag_name: ${{ github.ref }}
+  #          release_name: Release ${{ github.ref }}
+  #          draft: false
+  #          prerelease: false
+  #
+  #      - name: Upload Release Asset
+  #        id: upload-release-asset
+  #        uses: actions/upload-release-asset@v1
+  #        env:
+  #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #        with:
+  #          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+  #          asset_path: bin/*
+  #          asset_name: my-artifact.zip
+  #          asset_content_type: application/zip
+#  # notifies coveralls that all test jobs are finished
+#  finish:
+#    name: Finish
+#    needs: coverage
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: shogo82148/actions-goveralls@v1
+#        with:
+#          parallel-finished: true
 
