@@ -3,6 +3,7 @@
 .vscode
 .vagrant/
 httplb/
+*.code-workspace
 
 .DS\_Store
 
