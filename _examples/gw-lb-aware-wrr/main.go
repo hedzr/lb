@@ -4,14 +4,15 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/hedzr/lb"
-	"github.com/hedzr/lb/internal/randomizer"
 	"github.com/hedzr/lb/lbapi"
 	"github.com/hedzr/lb/pkg/logger"
 )
@@ -54,7 +55,11 @@ func main() {
 		ports = []int{8111, 8112}
 	}
 
-	var rand = randomizer.New()
+	seededRand := rand.New(rand.NewSource(time.Now().UTC().UnixNano()))
+	nextInRange := func(min, max int) int {
+		return seededRand.Intn(max-min) + min
+	}
+
 	var b = lb.New(lb.WeightedRoundRobin)
 	for _, p := range ports {
 		urlTarget := fmt.Sprintf("%s://ds1.service.local:%v", "http", p)
@@ -65,7 +70,7 @@ func main() {
 		logger.Printf("forwarding to -> %s\n", target)
 		proxy := httputil.NewSingleHostReverseProxy(target)
 		proxy.Transport = DebugTransport{}
-		b.Add(&ProxyPeer{proxy, urlTarget, rand.NextInRange(1, 10)})
+		b.Add(&ProxyPeer{proxy, urlTarget, nextInRange(1, 10)})
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
