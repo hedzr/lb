@@ -2,12 +2,12 @@
 
 ![Go](https://github.com/hedzr/lb/workflows/Go/badge.svg)
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/hedzr/lb.svg?label=release)](https://github.com/hedzr/lb/releases)
-[![](https://img.shields.io/badge/go-dev-green)](https://pkg.go.dev/github.com/hedzr/lb)
+[![Go Dev](https://img.shields.io/badge/go-dev-green)](https://pkg.go.dev/github.com/hedzr/lb)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/hedzr/lb) <!-- [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhedzr%2Flb.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fhedzr%2Flb?ref=badge_shield) 
 --> [![Go Report Card](https://goreportcard.com/badge/github.com/hedzr/lb)](https://goreportcard.com/report/github.com/hedzr/lb)
 [![Coverage Status](https://coveralls.io/repos/github/hedzr/lb/badge.svg?branch=master&.9)](https://coveralls.io/github/hedzr/lb?branch=master)
 
-`go-lb` provides a generic load balancers library.
+`go-lb` provides a general load balancers library.
 
 ## Features
 
@@ -20,9 +20,12 @@ The stocked algorithm are:
 - weighted random
 - weighted versioning
 
-Use `Register(...)/Unregister(...)` to add the balancer with your algorithm and use it with our `New(algorithm, opts...)`.
+Use `Register(...)`/`Unregister(...)` to add the balancer with your algorithm and use it with our `New(algorithm, opts...)`.
 
 ## History
+
+- v0.5.1
+  - upgrade deps
 
 - v0.5.0
   - a tiny logger interface has been embedded. So
