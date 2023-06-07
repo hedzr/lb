@@ -1,39 +1,103 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
 root = true
 
 [*]
+charset = utf-8
 end_of_line = lf
-indent_size = 2
-indent_style = tab
+indent_size = 4
+indent_style = space
 insert_final_newline = false
 trim_trailing_whitespace = false
-charset = utf-8
+max_line_length = 120
+tab_width = 4
 
-[*.{yml, yaml}]
+[{*.yaml,*.yml,.clang-format,.clang-tidy,_clang-format}]
 indent_size = 2
+tab_width = 2
 indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[*.{md, markdown, mkd}]
+[*.{adoc, asc, asciidoc}]
+indent_size = 4
+indent_style = tab
+trim_trailing_whitespace = false
+insert_final_newline = false
+ij_any_wrap_long_lines = true
+
+[*.{md,markdown,mkd}]
+# double whitespace at end of line
+# denotes a line break in Markdown
 indent_size = 4
 indent_style = tab
 trim_trailing_whitespace = false
 insert_final_newline = false
 
-[*.{sh, bash, zsh}]
-indent_size = 2
-indent_style = tab
-trim_trailing_whitespace = false
-insert_final_newline = false
+[*.{h,hh,hpp,hxx,c,cc,cpp,cxx,inl,ixx,mxx,cppm}]
+indent_size = 4
+indent_style = space
+tab_width = 4
 
 [*.go]
 indent_size = 4
 indent_style = tab
 
-[*.json]
+[go.{sum,mod,work}]
+indent_style = tab
 indent_size = 4
+
+[*.rb]
+indent_size = 4
+indent_style = tab
+
+[Vagrantfile]
+indent_size = 4
+indent_style = tab
+
+[{*.har,*.jsb2,*.jsb3,*.json,.babelrc,.eslintrc,.stylelintrc,bowerrc,jest.config}]
+indent_size = 2
 indent_style = space
+tab_width = 2
+
+[CMakeLists.txt]
+indent_style = tab
+indent_size = 4
 
 [Makefile]
+indent_style = tab
+indent_size = 4
+
+[*.{Makefile,mak,mk,make,cmake}]
+indent_style = tab
+indent_size = 4
+
+[*.{sh,bash,zsh,fish}]
+indent_size = 2
+indent_style = tab
+tab_width = 2
+trim_trailing_whitespace = false
+insert_final_newline = false
+
+[*.toml]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{js,jsx}]
+indent_size = 2
+indent_style = space
+
+[*.{S,s,ASM,asm,gas,mac,inc}]
+indent_size = 4
+indent_style = tab
+
+[*.rs]
+indent_style = tab
+indent_size = 4
+
+[*.{l,ll,lex,y,yy,yacc,yxx,hxx,lxx}]
 indent_style = tab
 indent_size = 4
